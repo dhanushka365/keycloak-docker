@@ -12,6 +12,9 @@ services:
       - DB_DATABASE=keycloak
       - DB_USER=keycloak
       - DB_PASSWORD=keycloak
+      - KC_BOOTSTRAP_ADMIN_USERNAME= admin
+      - KC_BOOTSTRAP_ADMIN_PASSWORD= admin
+      - DB_SCHEMA= public
     ports:
       - "8090:8080"
     networks:

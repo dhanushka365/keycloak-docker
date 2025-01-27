@@ -1,0 +1,40 @@
+version: '3'
+
+services:
+  keycloak_demo:
+    image: keycloak/keycloak
+    command: start-dev
+    environment:
+      - KEYCLOAK_USER=admin
+      - KEYCLOAK_PASSWORD=admin
+      - DB_VENDOR=postgres
+      - DB_ADDR=postgres
+      - DB_DATABASE=keycloak
+      - DB_USER=keycloak
+      - DB_PASSWORD=keycloak
+    ports:
+      - "8090:8080"
+    networks:
+      - keycloak_network
+    depends_on:
+      - postgres
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/auth/realms/master"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+  
+  postgres:
+    image: postgres
+    environment:
+      - POSTGRES_DB=keycloak
+      - POSTGRES_USER=keycloak
+      - POSTGRES_PASSWORD=keycloak
+    ports:
+      - "5432:5432"
+    networks:
+      - keycloak_network
+
+networks:
+  keycloak_network:
+    driver: bridge

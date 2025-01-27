@@ -1,43 +1,51 @@
-version: '3'
+# version: '3'
+
+# services:
+#   keycloak:
+#     image: quay.io/keycloak/keycloak:latest
+#     environment:
+#       - DB_VENDOR=postgres
+#       - DB_ADDR=postgres
+#       - DB_DATABASE=keycloak
+#       - DB_USER=keycloak
+#       - DB_PASSWORD=keycloak
+#       - KC_BOOTSTRAP_ADMIN_USERNAME=admin
+#       - KC_BOOTSTRAP_ADMIN_PASSWORD=admin
+#       - KC_DB_URL=jdbc:postgresql://postgres:5432/keycloak
+#       - KC_HOSTNAME=localhost
+#     ports:
+#       - "8090:8080"
+#     depends_on:
+#       - postgres
+#     healthcheck:
+#       test: ["CMD-SHELL", "curl -f http://localhost:8080/auth/realms/master"]
+#       interval: 30s
+#       timeout: 10s
+#       retries: 5
+
+#   postgres:
+#     image: postgres
+#     environment:
+#       - POSTGRES_DB=keycloak
+#       - POSTGRES_USER=keycloak
+#       - POSTGRES_PASSWORD=keycloak
+#     ports:
+#       - "5432:5432"
+
+
+version: '3.8'
 
 services:
-  keycloak_demo:
-    image: keycloak/keycloak
+  keycloak:
+    image: quay.io/keycloak/keycloak:latest
+    container_name: keycloak
+    ports:
+      - "8080:8080"
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_PROXY: edge
+    volumes:
+      - /your/project/path:/opt/jboss/keycloak/standalone/data
     command: start-dev
-    environment:
-      - KEYCLOAK_USER=admin
-      - KEYCLOAK_PASSWORD=admin
-      - DB_VENDOR=postgres
-      - DB_ADDR=postgres
-      - DB_DATABASE=keycloak
-      - DB_USER=keycloak
-      - DB_PASSWORD=keycloak
-      - KC_BOOTSTRAP_ADMIN_USERNAME= admin
-      - KC_BOOTSTRAP_ADMIN_PASSWORD= admin
-      - DB_SCHEMA= public
-    ports:
-      - "8090:8080"
-    networks:
-      - keycloak_network
-    depends_on:
-      - postgres
-    healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:8080/auth/realms/master"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
-  
-  postgres:
-    image: postgres
-    environment:
-      - POSTGRES_DB=keycloak
-      - POSTGRES_USER=keycloak
-      - POSTGRES_PASSWORD=keycloak
-    ports:
-      - "5432:5432"
-    networks:
-      - keycloak_network
-
-networks:
-  keycloak_network:
-    driver: bridge
+    restart: always
